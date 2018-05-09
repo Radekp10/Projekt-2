@@ -10,71 +10,78 @@
 Terminarz::Terminarz()
 {
 	int i;
-	for (i=0;i<MAX;i++)
+	for (i=0;i<MAX;i++)				
 	{
-		Zdarzenie zdarzenie;
+		Zdarzenie zdarzenie;		//utworzenie zdarzen
 		zdarz[i]=zdarzenie;
 	}
-	liczba_zdarzen=0;
+	liczba_zdarzen=0;				//poczatkowa liczba zdarzen=0
 	Data biezaca_data;
 }
 
-Terminarz::~Terminarz()
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Terminarz::~Terminarz()						//destruktor
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Terminarz::dodaj_zdarzenie(const Zdarzenie & zdarzenie)
 {
-	if (liczba_zdarzen==MAX-1)
+	if (liczba_zdarzen==MAX-1)				//sprawdzenie czy terminarz nie jest pelny
 		return false;
 	else
 	{
-		zdarz[liczba_zdarzen]=zdarzenie;
-		liczba_zdarzen+=1;
+		zdarz[liczba_zdarzen]=zdarzenie;	//dodanie zdarzenia do terminarza
+		liczba_zdarzen+=1;					//zwiekszenie liczby zdarzen o 1
 		return true;
 	}
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Terminarz::usun_zdarzenie(Zdarzenie & zdarzenie)
 {
 	int i,j;
-	Zdarzenie zd;
+	Zdarzenie zd;									//nowe (puste) zdarzenie, ktore wypelni luke po tym usunietym
 	if (liczba_zdarzen>0)
 	{
 		for (i=0;i<liczba_zdarzen;i++)
-			if (zdarz[i]==zdarzenie)
+			{
+			if (zdarz[i]==zdarzenie)				//wyszukanie zdarzenia, ktore chcemy usunac
 			{
 				for (j=(i+1);j<liczba_zdarzen;j++)
 					zdarz[j-1]=zdarz[j];
-				zdarz[liczba_zdarzen-1]=zd;
-				liczba_zdarzen--;
-				return true;
+				zdarz[liczba_zdarzen-1]=zd;			//przestawienie zdarzen
+				liczba_zdarzen--;					//zmiejszenie liczby zdarzen w terminarzu o 1
+				return true;						//zdarzenie usunieto
 			}
-			else
-				return false;		//zdarzenie nie nalezy do terminarza
+			
+			//else
+			//return false;
+			}	
 	}
 	else
 		return false;				//terminarz jest pusty
 	
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Terminarz::przesun_zdarzenie(int i, int r, int m, int t, int d, int h)
-{
-	if (zdarz[i].przesun_date_o(r,m,t,d)==false)
+{													//i-indeks zdarzenia
+	if (zdarz[i].przesun_date_o(r,m,t,d)==false)	//przesuniecie daty o zadana liczbe lat, miesiecy, tygodni, dni
 		return false;
-	else if (zdarz[i].przesun_godzine_o(h)==false)
+	else if (zdarz[i].przesun_godzine_o(h)==false)	//przesuniecie o zadana liczbe godzin
 		return false;
 	else
-		return false;
+		return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-ostream & Terminarz::wypisz_okres(ostream & os, int okres) const
+ostream & Terminarz::wypisz_okres(ostream & os, int okres) const	//wypisywanie zdarzen w danym okresie
 {
 	int i;
 	for (i=0;i<liczba_zdarzen;i++)
@@ -91,10 +98,10 @@ ostream & Terminarz::wypisz_okres(ostream & os, int okres) const
 			int dzien1, dzien2, j;
 			dzien1=biezaca_data.dzien_tygodnia;
 			dzien2=biezaca_data.dzien;
-			while (dzien1!=0)		//cofamy sie do poniedzialku
+			while (dzien1!=0)		//cofamy sie do niedzieli (indeks 0)
 			{
 				dzien1--;
-				dzien2--;		//i odejmujemy numery dnia miesiaca
+				dzien2--;			//i odejmujemy numery dnia miesiaca az zatrzymamy sie na niedzieli
 			}
 			for (j=dzien2;j<dzien2+7;j++)	//jestesmy wtedy na pocz. tyg. i mozemy szukac zdarzen na ten tydzien
 				if ((zdarz[i].data.dzien==j) && (zdarz[i].data.miesiac==biezaca_data.miesiac)
@@ -102,14 +109,14 @@ ostream & Terminarz::wypisz_okres(ostream & os, int okres) const
 					os << zdarz[i];
 		}
 
-		if (okres==3)			//zdarzenia w danym miesiacu
+		if (okres==3)				//zdarzenia w danym miesiacu
 			if (zdarz[i].data.miesiac==biezaca_data.miesiac)
 				os << zdarz[i];
 	}
 	return os;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ostream & operator<<(ostream & os, const Terminarz & T)
 {
@@ -120,39 +127,36 @@ ostream & operator<<(ostream & os, const Terminarz & T)
 	for (i=0;i<T.liczba_zdarzen;i++)
 		os << T.zdarz[i];
 	
-	/*os << "  Zdarzenie na dzien:\n";
+	/*os << "  ZDARZENIA na dzien:\n";
 	T.wypisz_okres(os,1);
-	os << "  Zdarzenia na tydzien:\n";
+	os << "  ZDARZENIA na tydzien:\n";
 	T.wypisz_okres(os,2);
-	os << "  Zdarzenia na miesiac:\n";
+	os << "  ZDARZENIA na miesiac:\n";
 	T.wypisz_okres(os,3);*/
 
 
-	
-    fstream plik;
-    plik.open( "terminarz.txt", ios::out);
+													//operacje na plikach
+    fstream plik;									
+    plik.open( "terminarz.txt", ios::out);			//otwarcie pliku
     if( plik.good() == true )
     {
-	int i;
+	//int i;
 	plik << "\n\t\tTERMINARZ" << "\n";
 	plik << "Biezaca data: ";
-	plik << T.biezaca_data << "\n\n";
-	for (i=0;i<T.liczba_zdarzen;i++)
-		plik << T.zdarz[i];
+	plik << T.biezaca_data << "\n\n";				//wypisanie zdarzen
+	/*for (i=0;i<T.liczba_zdarzen;i++)
+		plik << T.zdarz[i];*/
 	
-	/*plik << "  Zdarzenie na dzien:\n";
-	T.wypisz_okres(os,1);
-	plik << "  Zdarzenia na tydzien:\n";
-	T.wypisz_okres(os,2);
-	plik << "  Zdarzenia na miesiac:\n";
-	T.wypisz_okres(os,3);*/
+	plik << "  ZDARZENIA na dzien:\n";
+	T.wypisz_okres(plik,1);
+	plik << "\n  ZDARZENIA na tydzien:\n";
+	T.wypisz_okres(plik,2);
+	plik << "\n  ZDARZENIA na miesiac:\n";
+	T.wypisz_okres(plik,3);
 
 
-
-        plik.close();
+        plik.close();								//zamkniecie pliku
     }
-
-
 
 	return os;
 }
