@@ -5,13 +5,14 @@
 #include "data.h"
 
 
+
 Data::Data()
 {
 	time_t t;
-	time (&t);			//pobranie aktualnego czasu kalendarzowego
-	tm * teraz = localtime(&t);	//zamiana czasu kalendarzowego na lokalny
-	rok=teraz->tm_year+1900;	//lata sa liczone od 1900 roku, dlatego trzeba dodac te liczbe
-	miesiac=teraz->tm_mon+1;	//miesiace sa numerowane 0-11, wiec zwiekszamy indeks o 1
+	time (&t);						//pobranie aktualnego czasu kalendarzowego
+	tm * teraz = localtime(&t);		//zamiana czasu kalendarzowego na lokalny
+	rok=teraz->tm_year+1900;		//lata sa liczone od 1900 roku, dlatego trzeba dodac te liczbe
+	miesiac=teraz->tm_mon+1;		//miesiace sa numerowane 0-11, wiec zwiekszamy indeks o 1
 	dzien=teraz->tm_mday;
 	dzien_tygodnia=teraz->tm_wday;	//niedziela=0, poniedzialek=1, itd.
 	godzina=teraz->tm_hour;
@@ -20,7 +21,7 @@ Data::Data()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Data::~Data()
+Data::~Data()						//destruktor
 {
 }
 
@@ -32,7 +33,7 @@ bool Data::ustaw_date(int r, int m, int d)
 		return false;
 	else if ((m==4 || m==6 || m==9 || m==11) && (d==31))	// cztery miesiace 30-dniowe
 		return false;
-	else if (((m==2) && (d==31)) || ((m==2) && (d==30)))	//luty na 28/29 dni
+	else if (((m==2) && (d==31)) || ((m==2) && (d==30)))	//luty
 		return false;
 	else
 	{
@@ -42,26 +43,27 @@ bool Data::ustaw_date(int r, int m, int d)
 	}
 
 	time_t t;
-	time (&t);			//pobranie czasu kalendarzowego
-	tm * dat = localtime(&t);	//zamiana czasu kalendarzowego na lokalny
+	time (&t);						//pobranie czasu kalendarzowego
+	tm * dat = localtime(&t);		//zamiana czasu kalendarzowego na lokalny
 	dat->tm_year=rok-1900;
 	dat->tm_mon=miesiac-1;
 	dat->tm_mday=dzien;
-	mktime(dat);			//konwersja na czas kalendarzowy
+	mktime(dat);					//konwersja na czas kalendarzowy
 
 	dzien_tygodnia=dat->tm_wday;	//przyporzadkowania dnia tygodnia wybranej dacie
 
 	return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Data::ustaw_godzine(int h, int m)
 {
-	if (h<0 || h>24 || m<0 || m>59)	//jesli godzina poza zakresem to niepoprawne dane
+	if (h<0 || h>24 || m<0 || m>59)		//jesli godzina poza zakresem to niepoprawne dane
 		return false;
 	else
 	{
-		if (h==24)		//godzina 24 przyjmujemy za polnoc, czyli godzin 0
+		if (h==24)						//godzina 24 przyjmujemy za polnoc, czyli godzina 0
 			godzina=0;
 		else
 			godzina=h;
@@ -70,9 +72,10 @@ bool Data::ustaw_godzine(int h, int m)
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Data::operator==(Data & data)
-{
+{										//porownujemy skladowe rok, miesiac, dzien, godzina, minuta
 	if ((rok==data.rok) && (miesiac==data.miesiac) && (dzien==data.dzien)
 	&& (godzina==data.godzina) && (minuta==data.minuta))
 		return true;
@@ -84,17 +87,17 @@ bool Data::operator==(Data & data)
 
 ostream & operator<<(ostream & os, const Data & data)
 {
-	if (data.dzien<10)				//jesli dzien miesiaca jest < 10
+	if (data.dzien<10)						//jesli dzien miesiaca jest < 10
 		os << "0" << data.dzien << ".";		//to dopisujemy zero z przodu dla ujednolicenia zapisu
 	else
 		os << data.dzien << ".";
-	if (data.miesiac<10)				//jesli numer miesiaca jest < 10
+	if (data.miesiac<10)					//jesli numer miesiaca jest < 10
 		os << "0" << data.miesiac << ".";	//to dopisujemy zero z przodu dla ujednolicenia zapisu
 	else
 		os << data.miesiac << ".";
 	os << data.rok << ", ";
 
-	switch (data.dzien_tygodnia)
+	switch (data.dzien_tygodnia)			//zamiana numeru na napis dzien tygodnia
 	{
 		case 0:
 			os << "  Niedziela ";
@@ -121,11 +124,11 @@ ostream & operator<<(ostream & os, const Data & data)
 
 	//os << "\n ";
 	
-	if (data.godzina<10)
+	if (data.godzina<10)						//wypisywanie godziny
 		os << ",  g." << data.godzina << ":";
 	else 
 		os << ",  g." << data.godzina << ":";
-	if (data.minuta<10)
+	if (data.minuta<10)							//i minut
 		os << "0" << data.minuta;
 	else
 		os << data.minuta;

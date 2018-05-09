@@ -11,19 +11,19 @@ using namespace std;
 class Zdarzenie
 {
 private:
-	friend class Terminarz;
+	friend class Terminarz;						//klasa Zdarzenie ma dostep do prywatnych danych klasy Data
 	Data data;
-	string opis;
+	string opis;								//opis zdarzenia
 public:
 	Zdarzenie();
-	Zdarzenie(const char * s);
+	Zdarzenie(const char * s);					//inicjalizacja opisem zdarzenia
 	~Zdarzenie();
-	bool ustawdate(int r, int m, int d);
-	bool ustawgodzine(int h, int m);
-	bool przesun_date_o(int r, int m, int t, int d);
-	bool przesun_godzine_o(int h);
-	bool operator==(Zdarzenie & zdarzenie);
-	friend ostream & operator<<(ostream & os,const Zdarzenie & zdarzenie);
+	bool ustawdate(int r, int m, int d);		//przypisanie daty zdarzeniu
+	bool ustawgodzine(int h, int m);			//i godziny
+	bool przesun_date_o(int r, int m, int t, int d);	//przesuwanie daty o zadana liczbe lat, miesiecy, dni
+	bool przesun_godzine_o(int h);				//przesuwanie godziny o zadana liczbe godzin
+	bool operator==(Zdarzenie & zdarzenie);		//operator porownujacy obiekty
+	friend ostream & operator<<(ostream & os,const Zdarzenie & zdarzenie);	//wypisywanie zdarzenia
 };
 
 #endif
